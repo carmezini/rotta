@@ -26,7 +26,6 @@ type CheckIn = {
     timestamp: string;
 };
 
-const API_BASE = "http://localhost:8080/api";
 const USER_ID = "1"; // Default test user
 
 export default function Home() {
@@ -59,7 +58,7 @@ export default function Home() {
 
     // Fetch initial goals
     const fetchGoals = async () => {
-        const res = await fetch(`${API_BASE}/goals?user_id=${USER_ID}`);
+        const res = await fetch(`${process.env.API_URL}/goals?user_id=${USER_ID}`);
         if (!res.ok) {
             throw new Error("Não foi possível conectar ao servidor backend.");
         }
@@ -83,7 +82,7 @@ export default function Home() {
     const fetchCheckIns = async (goalId: string) => {
         try {
             setLoadingLogsGoalId(goalId);
-            const res = await fetch(`${API_BASE}/goals/${goalId}/checkins`);
+            const res = await fetch(`${process.env.API_URL}/goals/${goalId}/checkins`);
             if (res.ok) {
                 const data = await res.json();
                 setCheckInLogs((prev) => ({ ...prev, [goalId]: data || [] }));
@@ -136,7 +135,7 @@ export default function Home() {
     const handleCreateGoal = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch(`${API_BASE}/goals`, {
+            const res = await fetch(`${process.env.API_URL}/goals`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -161,7 +160,7 @@ export default function Home() {
         e.preventDefault();
         if (!selectedGoal) return;
         try {
-            const res = await fetch(`${API_BASE}/goals/${selectedGoal.id}`, {
+            const res = await fetch(`${process.env.API_URL}/goals/${selectedGoal.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -184,7 +183,7 @@ export default function Home() {
     const handleDeleteGoal = async (goalId: string) => {
         if (!confirm("Tem certeza que deseja deletar esta meta?")) return;
         try {
-            const res = await fetch(`${API_BASE}/goals/${goalId}`, {
+            const res = await fetch(`${process.env.API_URL}/goals/${goalId}`, {
                 method: "DELETE",
             });
             if (!res.ok) throw new Error("Erro ao deletar meta.");
@@ -198,7 +197,7 @@ export default function Home() {
         e.preventDefault();
         if (!selectedGoal) return;
         try {
-            const res = await fetch(`${API_BASE}/goals/${selectedGoal.id}/checkin`, {
+            const res = await fetch(`${process.env.API_URL}/goals/${selectedGoal.id}/checkin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
