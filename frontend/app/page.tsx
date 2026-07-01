@@ -58,7 +58,7 @@ export default function Home() {
 
     // Fetch initial goals
     const fetchGoals = async () => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${USER_ID}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goals?user_id=${1}`);
         if (!res.ok) {
             throw new Error("Não foi possível conectar ao servidor backend.");
         }
