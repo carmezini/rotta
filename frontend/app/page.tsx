@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ProgressBar from "../components/ProgressBar";
 
 type Goal = {
     id: string;
@@ -271,9 +272,9 @@ export default function Home() {
     const filteredGoals = goals.filter((g) => filterType === "all" || g.type === filterType);
 
     return (
-        <div className="min-h-screen bg-[#A5B4FB] font-sans flex items-start justify-center py-4 px-2 sm:py-8 sm:px-4">
+        <div className="h-screen bg-[#A5B4FB] font-sans flex items-start justify-center py-4 px-2 sm:py-2 sm:px-4 ">
             {/* Mobile Device Frame Mockup */}
-            <main className="w-full max-w-md bg-white rounded-[32px] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex flex-col min-h-[90vh]">
+            <main className="w-full max-w-md bg-white rounded-[32px] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]  flex flex-col h-full">
 
                 {/* App Sticky Header */}
                 <header className="bg-primary-purple text-white p-6 border-b-4 border-black flex flex-col gap-2 relative">
@@ -380,7 +381,6 @@ export default function Home() {
                     )}
 
                     {!loading && !error && filteredGoals.map((goal) => {
-                        const progressPercent = Math.min((goal.current_value / goal.target_value) * 100, 100);
                         const isCompleted = goal.current_value >= goal.target_value;
 
                         return (
@@ -418,18 +418,15 @@ export default function Home() {
                                     </div>
 
                                     {/* Neo-brutalist Progress Bar */}
-                                    <div className="h-5 w-full bg-zinc-200 border-2 border-black rounded-full overflow-hidden shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] relative">
-                                        <div
-                                            className={`h-full border-r-2 border-black transition-all duration-500 ${isCompleted ? "bg-primary-green" : "bg-primary-pink"
-                                                }`}
-                                            style={{ width: `${progressPercent}%` }}
-                                        />
-                                        {isCompleted && (
-                                            <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-black uppercase tracking-wider">
-                                                Meta Batida! 🎉
-                                            </span>
-                                        )}
-                                    </div>
+                                    <ProgressBar
+                                        minValue={0}
+                                        maxValue={goal.target_value}
+                                        currentValue={goal.current_value}
+                                        rounded="full"
+                                        color={isCompleted ? "green" : "pink"}
+                                        showPercentage={true}
+                                        className="h-5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                                    />
 
                                     {/* Action Buttons inside Card */}
                                     <div className="flex gap-2 mt-2 pt-2 border-t border-zinc-200">
@@ -488,7 +485,7 @@ export default function Home() {
                                                         className="bg-white border-2 border-black p-2 rounded-md shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
                                                     >
                                                         <div className="flex justify-between font-bold text-black">
-                                                            <span>+{log.value} unidades</span>
+                                                            <span>+{log.value}</span>
                                                             <span className="text-[10px] text-zinc-500">
                                                                 {new Date(log.timestamp).toLocaleDateString("pt-BR", {
                                                                     day: "2-digit",
