@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 
+	"github.com/carmezini/rotta/internal/config"
 	"github.com/carmezini/rotta/internal/handlers"
 	"github.com/carmezini/rotta/internal/repository"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 // corsMiddleware configura os cabeçalhos do CORS para permitir chamadas do Next.js (frontend)
@@ -27,28 +29,37 @@ func corsMiddleware() gin.HandlerFunc {
 }
 
 func main() {
-	// 1. Inicializa o roteador Gin
+	// 1. Carrega variáveis do .env (só tem efeito localmente; em produção o Render já injeta as vars)
+	if err := godotenv.Load(); err != nil {
+		log.Println("Arquivo .env não encontrado, usando variáveis de ambiente do sistema")
+	}
+
+	// 2. Inicializa o roteador Gin
 	r := gin.Default()
 
-	// 2. Aplica o Middleware de CORS
+	// 3. Aplica o Middleware de CORS
 	r.Use(corsMiddleware())
 
-	// 3. Inicializa os Repositórios (Em memória para desenvolvimento e testes rápidos)
-	// Para alternar para o PostgreSQL/Supabase futuramente, basta inicializar os repositórios correspondentes:
-	// db, _ := config.ConnectDB(config.LoadConfig())
-	// goalRepo := repository.NewPostgresGoalRepository(db)
-	// checkInRepo := repository.NewPostgresCheckInRepository(db)
-	
-	goalRepo := repository.NewInMemoryGoalRepository()
-	checkInRepo := repository.NewInMemoryCheckInRepository()
+	// 4. Conecta ao PostgreSQL
+	cfg := config.LoadConfig()
+	db, err := config.ConnectDB(cfg)
+	if err != nil {
+		log.Fatalf("Falha ao conectar ao banco de dados: %v", err)
+	}
+	defer db.Close()
+	log.Println("Conexão com o PostgreSQL estabelecida com sucesso.")
 
-	// 4. Inicializa os Handlers (Injetando os repositórios)
+	// 5. Inicializa os Repositórios PostgreSQL
+	goalRepo := repository.NewPostgresGoalRepository(db)
+	checkInRepo := repository.NewPostgresCheckInRepository(db)
+
+	// 6. Inicializa os Handlers (Injetando os repositórios)
 	goalHandler := handlers.NewGoalHandler(goalRepo)
 	checkInHandler := handlers.NewCheckInHandler(checkInRepo, goalRepo)
 
-	// 5. Definição das Rotas da API
+	// 7. Definição das Rotas da API
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok", "database": "in_memory"})
+		c.JSON(200, gin.H{"status": "ok", "database": "postgres"})
 	})
 
 	api := r.Group("/api")

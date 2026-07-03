@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	// O driver do PostgreSQL será necessário quando conectar ao Supabase.
-	// Para instalar, execute: go get github.com/lib/pq
-	// E depois descomente a linha abaixo:
-	// _ "github.com/lib/pq"
+	// Driver do PostgreSQL (registra o driver "postgres" no database/sql)
+	_ "github.com/lib/pq"
 )
 
 // DBConfig armazena as configurações de conexão com o banco de dados
@@ -34,7 +32,7 @@ func LoadConfig() *DBConfig {
 // ConnectDB tenta estabelecer uma conexão com o PostgreSQL
 func ConnectDB(cfg *DBConfig) (*sql.DB, error) {
 	// Nota: Esta função só funcionará após importar o driver (ex: github.com/lib/pq)
-	// e ter uma instância do PostgreSQL/Supabase ativa.
+	// e ter uma instância do PostgreSQL ativa.
 	db, err := sql.Open("postgres", cfg.ConnString)
 	if err != nil {
 		return nil, fmt.Errorf("erro ao abrir conexão com o banco: %w", err)
