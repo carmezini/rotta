@@ -11,7 +11,7 @@ type Goal = {
     type: "limit" | "streak" | "accumulate";
     target_value: number;
     current_value: number;
-    period: "daily" | "weekly" | "monthly" | "none";
+    period: "daily" | "weekly" | "monthly" | "annualy" | "none";
     start_date: string;
     end_date?: string;
     created_at: string;
@@ -45,7 +45,7 @@ export default function Home() {
     const [description, setDescription] = useState("");
     const [type, setType] = useState<"limit" | "streak" | "accumulate">("accumulate");
     const [targetValue, setTargetValue] = useState(1);
-    const [period, setPeriod] = useState<"daily" | "weekly" | "monthly" | "none">("daily");
+    const [period, setPeriod] = useState<"daily" | "weekly" | "monthly" | "annualy" | "none">("daily");
 
     // CheckIn Form fields
     const [checkInValue, setCheckInValue] = useState(1);
@@ -263,6 +263,8 @@ export default function Home() {
                 return "Semanal";
             case "monthly":
                 return "Mensal";
+            case "annualy":
+                return "Anual";
             case "none":
                 return "Sem prazo";
         }
@@ -271,12 +273,12 @@ export default function Home() {
     const filteredGoals = goals.filter((g) => filterType === "all" || g.type === filterType);
 
     return (
-        <div className="h-screen bg-[#A5B4FB] font-sans flex items-start justify-center py-4 px-2 sm:py-2 sm:px-4 ">
+        <div className="bg-primary-green/60 h-screen p-2 font-sans flex items-start justify-center">
             {/* Mobile Device Frame Mockup */}
-            <main className="w-full max-w-md bg-white rounded-[32px] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]  flex flex-col h-full">
+            <main className="w-full max-w-md bg-white rounded-[32px] flex flex-col h-full">
 
                 {/* App Sticky Header */}
-                <header className="bg-primary-purple text-white p-6 border-b-4 border-black flex flex-col gap-2 relative">
+                <header className="bg-primary-purple text-white p-6 rounded-3xl flex flex-col gap-2 relative">
                     {/* Visual Retro Header Buttons */}
                     <div className="flex gap-1.5 absolute top-4 right-4">
                         <div className="w-3.5 h-3.5 rounded-full border-2 border-black bg-primary-red" />
@@ -584,6 +586,7 @@ export default function Home() {
                                                 <option value="daily">Diário</option>
                                                 <option value="weekly">Semanal</option>
                                                 <option value="monthly">Mensal</option>
+                                                <option value="annualy">Anual</option>
                                                 <option value="none">Sem limite</option>
                                             </select>
                                         </div>
