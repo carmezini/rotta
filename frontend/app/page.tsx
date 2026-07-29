@@ -370,7 +370,7 @@ export default function Home() {
         </div>
 
         {/* Goals Scrollable Content */}
-        <div className="flex-1 p-4 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-5 bg-zinc-50 content-start">
+        <div className="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 gap-5 bg-zinc-50 content-start">
           {loading && (
             <div className="py-12 text-center col-span-full">
               <div className="animate-spin inline-block w-8 h-8 border-4 border-black border-t-transparent rounded-full mb-3" />
