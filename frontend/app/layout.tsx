@@ -1,9 +1,32 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
     title: "Rotta — sua vida com direção",
     description: "Metas, limites e hábitos reunidos em um painel pessoal.",
+    applicationName: "Rotta",
+    manifest: "/manifest.webmanifest",
+    appleWebApp: {
+        capable: true,
+        title: "Rotta",
+        statusBarStyle: "black-translucent",
+    },
+    formatDetection: {
+        telephone: false,
+    },
+    icons: {
+        icon: "/icon.svg",
+        apple: "/icon.svg",
+    },
+};
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    viewportFit: "cover",
+    interactiveWidget: "resizes-content",
+    themeColor: "#433B8D",
+    colorScheme: "light",
 };
 
 export default function RootLayout({
