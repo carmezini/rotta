@@ -286,9 +286,8 @@ export default function Home() {
   );
 
   return (
-    <div className="app-shell min-h-screen p-2 sm:p-6 font-sans flex items-start justify-center">
-      {/* Mobile Device Frame Mockup */}
-      <main className="w-full max-w-5xl bg-white border-4 border-black rounded-[28px] flex flex-col min-h-[calc(100vh-1rem)] sm:min-h-[calc(100vh-3rem)] shadow-[10px_10px_0_#111] overflow-hidden">
+    <div className="app-shell sm:p-6 font-sans flex items-start justify-center">
+      <main className="app-frame w-full max-w-5xl bg-white border-4 border-black rounded-[28px] flex flex-col min-h-[calc(100dvh-1rem)] sm:min-h-[calc(100dvh-3rem)] shadow-[10px_10px_0_#111] overflow-hidden">
         {/* App Sticky Header */}
         <header className="bg-primary-purple text-white p-6 rounded-3xl flex flex-col gap-2 relative">
           {/* Visual Retro Header Buttons */}
@@ -300,14 +299,11 @@ export default function Home() {
 
           <div>
             <p className="text-[11px] font-black uppercase tracking-[.28em] text-primary-yellow">
-              Seu painel pessoal
+              Painel pessoal
             </p>
             <h1 className="text-4xl sm:text-5xl font-black tracking-[-.08em] text-white select-none">
               ROTTA<span className="text-primary-pink">.</span>
             </h1>
-            <p className="mt-1 text-sm font-bold text-white/70">
-              Pequenos registros. Uma vida com direção.
-            </p>
           </div>
 
           {/* Quick Stats Panel */}
@@ -352,7 +348,7 @@ export default function Home() {
                 onClick={() => setFilterType(type)}
                 className={`px-3 py-1.5 text-xs font-black border-2 border-black rounded-lg whitespace-nowrap transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${
                   filterType === type
-                    ? "bg-primary-pink text-black"
+                    ? "bg-primary-pink text-white font-bold"
                     : "bg-white text-zinc-700"
                 }`}
               >
@@ -367,7 +363,9 @@ export default function Home() {
             onClick={handleOpenCreate}
             className="w-full bg-[#A6FAFF] text-black font-black border-3 border-black p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#79F7FF] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none rounded-xl flex items-center justify-center gap-2"
           >
-            <span>CRIAR NOVA META ➕</span>
+            <span className="text-zinc-800 font-semibold">
+              CRIAR NOVA META ➕
+            </span>
           </button>
         </div>
 
@@ -487,7 +485,9 @@ export default function Home() {
                         onClick={() => handleOpenCheckIn(goal)}
                         className="flex-1 bg-primary-green text-black font-black border-2 border-black py-2 rounded-lg text-xs tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-[#6cb07b] transition-all flex items-center justify-center gap-1"
                       >
-                        <span>CHECK-IN 👍</span>
+                        <span className="text-white font-semibold">
+                          CHECK-IN 👍
+                        </span>
                       </button>
 
                       <button
@@ -577,8 +577,8 @@ export default function Home() {
 
       {/* MODALS / OVERLAYS */}
       {activeModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-black rounded-3xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="safe-modal fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center">
+          <div className="bg-white border-4 border-black rounded-3xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
             <div
               className={`p-4 border-b-4 border-black flex justify-between items-center ${
@@ -603,7 +603,7 @@ export default function Home() {
             </div>
 
             {/* Modal Forms */}
-            <div className="p-5">
+            <div className="p-5 overflow-y-auto overscroll-contain">
               {/* Create / Edit Form */}
               {(activeModal === "create" || activeModal === "edit") && (
                 <form
