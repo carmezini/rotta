@@ -1,0 +1,6 @@
+# Binário compilado
+rotta
+*.exe
+
+# Variáveis de ambiente (nunca commitar!)
+.env
