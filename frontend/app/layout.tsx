@@ -9,14 +9,17 @@ export const metadata: Metadata = {
     appleWebApp: {
         capable: true,
         title: "Rotta",
-        statusBarStyle: "black-translucent",
+        statusBarStyle: "black",
     },
     formatDetection: {
         telephone: false,
     },
     icons: {
-        icon: "/icon.svg",
-        apple: "/icon.svg",
+        icon: [
+            { url: "/icon_v2-192.png", sizes: "192x192", type: "image/png" },
+            { url: "/icon_v2-512.png", sizes: "512x512", type: "image/png" },
+        ],
+        apple: "/icon_v2-180.png",
     },
 };
 

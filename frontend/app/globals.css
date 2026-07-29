@@ -30,11 +30,14 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 .app-shell {
+  box-sizing: border-box;
   min-height: 100dvh;
   padding-top: max(.5rem, env(safe-area-inset-top));
   padding-right: max(.5rem, env(safe-area-inset-right));
@@ -75,12 +78,15 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 
 @media (display-mode: standalone) {
   .app-shell {
-    padding: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
     background: #fff;
   }
 
   .app-frame {
-    min-height: 100dvh;
+    min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     border: 0;
     border-radius: 0;
     box-shadow: none;
