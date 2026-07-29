@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os"
 
 	"github.com/carmezini/rotta/internal/config"
 	"github.com/carmezini/rotta/internal/handlers"
@@ -13,8 +15,12 @@ import (
 
 // corsMiddleware configura os cabeçalhos do CORS para permitir chamadas do Next.js (frontend)
 func corsMiddleware() gin.HandlerFunc {
+	allowedOrigin := os.Getenv("FRONTEND_URL")
+	if allowedOrigin == "" {
+		allowedOrigin = "http://localhost:3000"
+	}
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*") // Em produção, altere para a URL do seu frontend Next.js
+		c.Writer.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
@@ -40,18 +46,26 @@ func main() {
 	// 3. Aplica o Middleware de CORS
 	r.Use(corsMiddleware())
 
-	// 4. Conecta ao PostgreSQL
-	cfg := config.LoadConfig()
-	db, err := config.ConnectDB(cfg)
-	if err != nil {
-		log.Fatalf("Falha ao conectar ao banco de dados: %v", err)
+	var goalRepo repository.GoalRepository
+	var checkInRepo repository.CheckInRepository
+	if os.Getenv("DATABASE_URL") == "" {
+		goalRepo = repository.NewInMemoryGoalRepository()
+		checkInRepo = repository.NewInMemoryCheckInRepository()
+		log.Println("Armazenamento em memória ativo (defina DATABASE_URL para usar PostgreSQL).")
+	} else {
+		cfg := config.LoadConfig()
+		db, err := config.ConnectDB(cfg)
+		if err != nil {
+			log.Fatalf("Falha ao conectar ao banco de dados: %v", err)
+		}
+		defer db.Close()
+		if err := config.ApplyMigrations(context.Background(), db); err != nil {
+			log.Fatalf("Falha ao preparar banco de dados: %v", err)
+		}
+		goalRepo = repository.NewPostgresGoalRepository(db)
+		checkInRepo = repository.NewPostgresCheckInRepository(db)
+		log.Println("Conexão com o PostgreSQL estabelecida.")
 	}
-	defer db.Close()
-	log.Println("Conexão com o PostgreSQL estabelecida com sucesso.")
-
-	// 5. Inicializa os Repositórios PostgreSQL
-	goalRepo := repository.NewPostgresGoalRepository(db)
-	checkInRepo := repository.NewPostgresCheckInRepository(db)
 
 	// 6. Inicializa os Handlers (Injetando os repositórios)
 	goalHandler := handlers.NewGoalHandler(goalRepo)
@@ -59,7 +73,7 @@ func main() {
 
 	// 7. Definição das Rotas da API
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok", "database": "postgres"})
+		c.JSON(200, gin.H{"status": "ok"})
 	})
 
 	api := r.Group("/api")
@@ -76,8 +90,12 @@ func main() {
 		api.GET("/goals/:id/checkins", checkInHandler.List)
 	}
 
-	log.Println("Servidor rodando na porta :8080...")
-	if err := r.Run(":8080"); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Printf("Servidor rodando na porta :%s...", port)
+	if err := r.Run("0.0.0.0:" + port); err != nil {
 		log.Fatalf("Falha ao iniciar o servidor: %v", err)
 	}
 }

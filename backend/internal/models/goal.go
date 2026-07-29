@@ -45,7 +45,7 @@ type CreateGoalRequest struct {
 	Name        string     `json:"name" binding:"required"`
 	Description string     `json:"description"`
 	Type        GoalType   `json:"type" binding:"required,oneof=limit streak accumulate"`
-	TargetValue float64    `json:"target_value" binding:"required"`
+	TargetValue float64    `json:"target_value" binding:"required,gt=0"`
 	Period      PeriodType `json:"period" binding:"required,oneof=daily weekly monthly none"`
 	EndDate     *time.Time `json:"end_date"`
 }

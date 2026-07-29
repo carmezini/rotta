@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/carmezini/rotta/internal/models"
 )
@@ -19,6 +20,12 @@ func NewPostgresGoalRepository(db *sql.DB) *PostgresGoalRepository {
 }
 
 func (r *PostgresGoalRepository) Create(ctx context.Context, goal *models.Goal) error {
+	if goal.ID == "" {
+		goal.ID = generateUUID()
+	}
+	now := time.Now()
+	goal.CreatedAt = now
+	goal.UpdatedAt = now
 	query := `
 		INSERT INTO goals (id, user_id, name, description, type, target_value, current_value, period, start_date, end_date, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
@@ -133,6 +140,10 @@ func NewPostgresCheckInRepository(db *sql.DB) *PostgresCheckInRepository {
 }
 
 func (r *PostgresCheckInRepository) Create(ctx context.Context, checkin *models.CheckIn) error {
+	if checkin.ID == "" {
+		checkin.ID = generateUUID()
+	}
+	checkin.CreatedAt = time.Now()
 	query := `
 		INSERT INTO checkins (id, goal_id, value, notes, timestamp, created_at)
 		VALUES ($1, $2, $3, $4, $5, NOW())

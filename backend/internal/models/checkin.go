@@ -16,7 +16,7 @@ type CheckIn struct {
 
 // CreateCheckInRequest representa o payload para registrar um novo progresso
 type CreateCheckInRequest struct {
-	Value     float64    `json:"value" binding:"required"`
+	Value     float64    `json:"value" binding:"required,gt=0"`
 	Notes     string     `json:"notes"`
 	Timestamp *time.Time `json:"timestamp"` // Opcional, se nulo assume o tempo atual
 }
